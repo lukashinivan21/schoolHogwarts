@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class StudentService {
+public class StudentService implements StudentInterface {
 
     private final Map<Long, Student> studentsMap = new HashMap<>();
     private Long numberId = 1L;

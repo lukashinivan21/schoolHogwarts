@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class FacultyService {
+public class FacultyService implements FacultyInterface {
 
     private final Map<Long, Faculty> facultyMap = new HashMap<>();
     private Long numberId = 1L;
