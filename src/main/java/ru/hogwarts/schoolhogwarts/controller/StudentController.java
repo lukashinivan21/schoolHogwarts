@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.schoolhogwarts.model.Student;
-import ru.hogwarts.schoolhogwarts.service.StudentInterface;
+import ru.hogwarts.schoolhogwarts.service.StudentService;
 
 import java.util.List;
 
@@ -12,20 +12,20 @@ import java.util.List;
 @RequestMapping("/student")
 public class StudentController {
 
-    private final StudentInterface studentInterface;
+    private final StudentService studentService;
 
-    public StudentController(StudentInterface studentInterface) {
-        this.studentInterface = studentInterface;
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
     }
 
     @PostMapping
     public Student createStudent(@RequestBody Student student) {
-        return studentInterface.createStudent(student);
+        return studentService.createStudent(student);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Student> getStudentInfo(@PathVariable Long id) {
-        Student gettingStudent = studentInterface.readStudent(id);
+        Student gettingStudent = studentService.readStudent(id);
         if (gettingStudent == null) {
             return ResponseEntity.notFound().build();
         }
@@ -34,7 +34,7 @@ public class StudentController {
 
     @PutMapping
     public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
-        Student updatingStudent = studentInterface.updateStudent(student);
+        Student updatingStudent = studentService.updateStudent(student);
         if (updatingStudent == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -43,19 +43,16 @@ public class StudentController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
-        Student deletingStudent = studentInterface.deleteStudent(id);
-        if (deletingStudent == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(deletingStudent);
+        studentService.deleteStudent(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/studentWithAge{age}")
     public ResponseEntity<List<Student>> getStudentsWithThisAge(@PathVariable int age) {
-        List<Student> studentsWithThisAge = studentInterface.studentsWithThisAge(age);
+        List<Student> studentsWithThisAge = studentService.studentsWithThisAge(age);
         if (studentsWithThisAge == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(studentInterface.studentsWithThisAge(age));
+        return ResponseEntity.ok(studentsWithThisAge);
     }
 }

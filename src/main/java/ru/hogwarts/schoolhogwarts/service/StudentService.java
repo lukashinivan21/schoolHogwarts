@@ -1,45 +1,18 @@
 package ru.hogwarts.schoolhogwarts.service;
 
-import org.springframework.stereotype.Service;
 import ru.hogwarts.schoolhogwarts.model.Student;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-@Service
-public class StudentService implements StudentInterface {
+public interface StudentService {
 
-    private final Map<Long, Student> studentsMap = new HashMap<>();
-    private Long numberId = 1L;
+    Student createStudent(Student student);
 
-    public Student createStudent(Student student) {
-        student.setId(numberId);
-        studentsMap.put(numberId, student);
-        numberId++;
-        return student;
-    }
+    Student readStudent(Long numberId);
 
-    public Student readStudent(Long numberId) {
-        return studentsMap.get(numberId);
-    }
+    Student updateStudent(Student student);
 
-    public Student updateStudent(Student student) {
-        if (!studentsMap.containsKey(student.getId())) {
-            return null;
-        }
-        studentsMap.put(student.getId(), student);
-        return student;
-    }
+    void deleteStudent(Long numberId);
 
-    public Student deleteStudent(Long numberId) {
-        return studentsMap.remove(numberId);
-    }
-
-    public List<Student> studentsWithThisAge(int age) {
-        return studentsMap.values().stream()
-                .filter(student -> student.getAge() == age)
-                .collect(Collectors.toUnmodifiableList());
-    }
+    List<Student> studentsWithThisAge(int age);
 }
