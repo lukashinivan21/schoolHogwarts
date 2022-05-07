@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.schoolhogwarts.model.Faculty;
 import ru.hogwarts.schoolhogwarts.service.FacultyService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/faculty")
 public class FacultyController {
@@ -42,17 +40,27 @@ public class FacultyController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Faculty>  deleteFaculty(@PathVariable Long id) {
+    public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
         facultyService.deleteFaculty(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/facultyWithColor{color}")
-    public ResponseEntity<List<Faculty>> getAllFacultiesWithThisColor(@PathVariable String color) {
-        List<Faculty> facultiesWithThisColor = facultyService.facultiesWithThisColor(color);
-        if (facultiesWithThisColor == null) {
+    public ResponseEntity<Faculty> getFacultyWithThisColor(@PathVariable String color) {
+        Faculty facultyWithThisColor = facultyService.facultyWithThisColor(color);
+        if (facultyWithThisColor == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(facultiesWithThisColor);
+        return ResponseEntity.ok(facultyWithThisColor);
+    }
+
+    @GetMapping("/facultyWithNameOrColor")
+    public ResponseEntity<Faculty> getFacultiesWithNameOrColor(@RequestParam("name") String name,
+                                                               @RequestParam("color") String color) {
+        Faculty faculty = facultyService.findFacultyByNameOrColor(name, color);
+        if (faculty == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(faculty);
     }
 }
