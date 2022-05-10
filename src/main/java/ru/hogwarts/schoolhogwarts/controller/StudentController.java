@@ -1,0 +1,98 @@
+package ru.hogwarts.schoolhogwarts.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.schoolhogwarts.model.Faculty;
+import ru.hogwarts.schoolhogwarts.model.Student;
+import ru.hogwarts.schoolhogwarts.service.StudentService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/student")
+public class StudentController {
+
+    private final StudentService studentService;
+
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
+
+    @PostMapping
+    public Student createStudent(@RequestBody Student student) {
+        return studentService.createStudent(student);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<Student> getStudentInfo(@PathVariable Long id) {
+        Student gettingStudent = studentService.readStudent(id);
+        if (gettingStudent == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(gettingStudent);
+    }
+
+    @PutMapping
+    public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
+        Student updatingStudent = studentService.updateStudent(student);
+        if (updatingStudent == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(updatingStudent);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/studentsWithAge{age}")
+    public ResponseEntity<List<Student>> getStudentsWithThisAge(@PathVariable int age) {
+        List<Student> studentsWithThisAge = studentService.studentsWithThisAge(age);
+        if (studentsWithThisAge == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(studentsWithThisAge);
+    }
+
+    @GetMapping("/studentsWithAgeBetween")
+    public ResponseEntity<List<Student>> findStudentsWithAgeBetween(@RequestParam("age1") int age1, @RequestParam("age2") int age2) {
+        List<Student> students = studentService.studentsWithAgeBetween(age1, age2);
+        if (students == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(students);
+    }
+
+
+    @GetMapping("/studentsAtFaculty")
+    public ResponseEntity<List<Student>> allStudentsAtFaculty(@RequestParam(required = false) Long numberId,
+                                                              @RequestParam(required = false) String name,
+                                                              @RequestParam(required = false) String color) {
+        List<Student> students = null;
+        if (numberId != null) {
+            students = studentService.findStudentsByFacultyId(numberId);
+        }
+        if (name != null) {
+            students = studentService.findStudentsByFacultyName(name);
+        }
+        if (color != null) {
+            students = studentService.findStudentsByFacultyColor(color);
+        }
+        if (students == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/facultyOfStudentWithId{numberId}")
+    public ResponseEntity<Faculty> facultyOfStudent(@PathVariable Long numberId) {
+        Faculty faculty = studentService.getFacultyOfStudent(numberId);
+        if (faculty == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(faculty);
+    }
+}
