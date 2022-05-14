@@ -55,8 +55,8 @@ public class FacultyController {
     }
 
     @GetMapping("/facultyWithNameOrColor")
-    public ResponseEntity<Faculty> getFacultiesWithNameOrColor(@RequestParam("name") String name,
-                                                               @RequestParam("color") String color) {
+    public ResponseEntity<Faculty> getFacultyWithNameOrColor(@RequestParam("name") String name,
+                                                             @RequestParam("color") String color) {
         Faculty faculty = facultyService.findFacultyByNameOrColor(name, color);
         if (faculty == null) {
             return ResponseEntity.notFound().build();

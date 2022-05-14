@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import ru.hogwarts.schoolhogwarts.model.Avatar;
 import ru.hogwarts.schoolhogwarts.service.AvatarService;
+import ru.hogwarts.schoolhogwarts.service.AvatarServiceImpl;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,13 +24,15 @@ public class AvatarController {
 
     private final AvatarService avatarService;
 
+    private static final int fileSize = 1024 * 300;
+
     public AvatarController(AvatarService avatarService) {
         this.avatarService = avatarService;
     }
 
     @PostMapping(value = "/{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadAvatar(@PathVariable Long studentId, @RequestParam MultipartFile avatar) throws IOException {
-        if (avatar.getSize() >= 1024 * 300) {
+        if (avatar.getSize() >= fileSize) {
             return ResponseEntity.badRequest().body("File is too big");
         }
         avatarService.uploadAvatar(studentId, avatar);
